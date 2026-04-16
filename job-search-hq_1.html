@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Job Search HQ</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', 'Helvetica Neue', sans-serif; background: #f4f5fb; color: #1a1d2e; min-height: 100vh; }
+
+  /* Header */
+  #header { background: linear-gradient(135deg, #1a1d2e 0%, #2d3561 100%); padding: 24px 32px 0; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+  #header-inner { max-width: 1200px; margin: 0 auto; }
+  #header-top { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; }
+  #header-top h1 { font-family: 'Playfair Display', Georgia, serif; font-size: 26px; font-weight: 700; color: #fff; letter-spacing: -0.01em; }
+  #header-top p { font-size: 13px; color: rgba(255,255,255,0.5); margin-top: 4px; }
+  #stats { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .stat-box { background: rgba(255,255,255,0.08); border-radius: 10px; padding: 8px 16px; text-align: center; }
+  .stat-box .val { font-size: 22px; font-weight: 700; color: #fff; }
+  .stat-box .val.alert { color: #fbbf24; }
+  .stat-box .lbl { font-size: 11px; color: rgba(255,255,255,0.5); letter-spacing: 0.06em; text-transform: uppercase; }
+  #email-btn { background: rgba(255,255,255,0.12); color: #fff; border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; padding: 10px 16px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; }
+  #email-btn:hover { background: rgba(255,255,255,0.2); }
+
+  /* Tabs */
+  #tabs { display: flex; margin-top: 20px; }
+  .tab-btn { background: none; border: none; cursor: pointer; padding: 10px 20px; font-size: 14px; font-weight: 400; color: rgba(255,255,255,0.45); border-bottom: 2px solid transparent; transition: all 0.15s; font-family: inherit; }
+  .tab-btn.active { font-weight: 600; color: #fff; border-bottom-color: #4c6ef5; }
+
+  /* Content */
+  #content { max-width: 1200px; margin: 0 auto; padding: 28px 24px; }
+
+  /* Inputs */
+  .inp { width: 100%; padding: 9px 12px; border: 1.5px solid #e2e5ef; border-radius: 8px; font-size: 14px; font-family: inherit; color: #1a1d2e; background: #fafbff; outline: none; }
+  .inp:focus { border-color: #4c6ef5; }
+  textarea.inp { resize: vertical; }
+
+  /* Buttons */
+  .btn-primary { background: linear-gradient(135deg, #3b5bdb, #4c6ef5); color: #fff; border: none; border-radius: 8px; padding: 10px 20px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; letter-spacing: 0.01em; }
+  .btn-primary:hover { opacity: 0.9; }
+  .btn-secondary { background: #f0f2fa; color: #3b5bdb; border: none; border-radius: 8px; padding: 10px 20px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; }
+  .btn-secondary:hover { background: #e4e8f8; }
+  .btn-sm { padding: 6px 12px; font-size: 12px; }
+  .btn-danger { background: #fff0f0; color: #e53e3e; border: none; border-radius: 8px; padding: 6px 12px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit; }
+  .btn-icon { background: #eef2ff; color: #3b5bdb; border: none; border-radius: 6px; padding: 5px 9px; font-size: 11px; font-weight: 600; cursor: pointer; font-family: inherit; }
+
+  /* Status badge */
+  .status-badge { padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+  .status-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+
+  /* Field label */
+  .field { margin-bottom: 16px; }
+  .field label { display: block; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #888; margin-bottom: 6px; }
+
+  /* Toolbar row */
+  .toolbar { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
+
+  /* Pipeline list */
+  .pipeline-list { display: flex; flex-direction: column; gap: 8px; }
+  .pipeline-row { background: #fff; border-radius: 12px; padding: 16px 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); border: 1px solid #eaecf5; display: flex; gap: 16px; align-items: center; flex-wrap: wrap; cursor: pointer; transition: box-shadow 0.15s; }
+  .pipeline-row:hover { box-shadow: 0 4px 16px rgba(60,80,200,0.1); }
+  .pipeline-row.needs-update { border: 1.5px dashed #e8c97a; }
+  .pipeline-row .co-name { font-weight: 700; font-size: 15px; }
+  .pipeline-row .co-title { font-size: 13px; color: #666; margin-top: 2px; }
+  .pipeline-row .co-title.warn { color: #e8a020; }
+  .pipeline-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .pipeline-tag { border-radius: 6px; padding: 2px 8px; font-size: 11px; font-weight: 600; }
+  .tag-blue { background: #eef2ff; color: #3b5bdb; }
+  .tag-amber { background: #fff7e6; color: #b07d2e; }
+  .tag-green { background: #f0fff4; color: #2e7a4a; }
+  .pipeline-actions { display: flex; gap: 6px; }
+
+  /* Kanban */
+  #kanban-hint { background: #fff8ee; border: 1px solid #f0d090; border-radius: 10px; padding: 10px 16px; margin-bottom: 16px; font-size: 13px; color: #7a5c1e; display: flex; align-items: center; gap: 8px; }
+  #kanban-tip { font-size: 13px; color: #888; margin-bottom: 16px; }
+  #kanban-board { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 16px; align-items: flex-start; }
+  .kanban-col { min-width: 200px; max-width: 220px; flex-shrink: 0; background: #f0f1f8; border-radius: 14px; padding: 12px 10px; border: 2px dashed transparent; transition: all 0.14s; min-height: 120px; }
+  .kanban-col.drag-over { border-color: var(--col-dot); background: var(--col-bg); }
+  .kanban-col-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; padding: 0 2px; }
+  .kanban-col-title { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; letter-spacing: 0.05em; }
+  .kanban-col-count { font-size: 11px; font-weight: 700; color: #bbb; background: #fff; border-radius: 10px; padding: 1px 7px; }
+  .kanban-cards { display: flex; flex-direction: column; gap: 8px; }
+  .kanban-empty { text-align: center; padding: 20px 8px; font-size: 12px; color: #ccc; font-style: italic; }
+  .kanban-card { background: #fff; border-radius: 10px; padding: 12px; cursor: grab; box-shadow: 0 1px 4px rgba(0,0,0,0.07); border: 1px solid #eaecf5; transition: box-shadow 0.13s; user-select: none; }
+  .kanban-card:hover { box-shadow: 0 4px 14px rgba(60,80,200,0.13); }
+  .kanban-card.needs-update { border: 1.5px dashed #e8a020; }
+  .kanban-card.dragging { opacity: 0.45; transform: rotate(1.5deg) scale(1.03); box-shadow: 0 10px 28px rgba(60,80,200,0.22); }
+  .kanban-card-header { display: flex; justify-content: space-between; align-items: flex-start; }
+  .kanban-card .company { font-weight: 700; font-size: 13px; color: #1a1d2e; }
+  .kanban-card .role { font-size: 12px; color: #777; margin-top: 2px; line-height: 1.3; }
+  .kanban-card .loc { font-size: 11px; color: #bbb; margin-top: 2px; }
+  .kanban-card .badges { display: flex; gap: 4px; margin-top: 8px; flex-wrap: wrap; }
+  .kanban-badge { border-radius: 5px; padding: 1px 7px; font-size: 10px; font-weight: 700; }
+  .update-pill { font-size: 9px; font-weight: 700; background: #fff7e6; color: #b07d2e; border-radius: 4px; padding: 1px 5px; letter-spacing: 0.04em; }
+  #archive-col { min-width: 185px; flex-shrink: 0; }
+  #archive-label { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; color: #bbb; text-transform: uppercase; margin-bottom: 10px; padding-left: 4px; }
+  .archive-section { background: #f5f5f5; border-radius: 10px; padding: 10px; border: 2px dashed transparent; margin-bottom: 10px; transition: all 0.14s; }
+  .archive-section.drag-over { border-color: var(--col-dot); background: var(--col-bg); }
+  .archive-header { display: flex; align-items: center; gap: 6px; margin-bottom: 0; }
+  .archive-card { background: #fff; border-radius: 8px; padding: 8px 10px; cursor: grab; margin-top: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #e8e8e8; opacity: 0.65; user-select: none; }
+  .archive-card .company { font-weight: 600; font-size: 12px; }
+  .archive-card .role { font-size: 11px; color: #aaa; }
+
+  /* Contacts grid */
+  .contacts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+  .contact-card { background: #fff; border-radius: 12px; padding: 18px 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); border: 1px solid #eaecf5; }
+  .contact-card-header { display: flex; justify-content: space-between; align-items: flex-start; }
+  .contact-card .name { font-weight: 700; font-size: 15px; }
+  .contact-card .role { font-size: 13px; color: #666; margin-top: 2px; }
+  .contact-card .email { font-size: 12px; color: #3b5bdb; margin-top: 8px; }
+  .contact-card .notes { font-size: 12px; color: #888; margin-top: 6px; line-height: 1.5; }
+  .contact-tags { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 4px; }
+
+  /* Follow-ups */
+  .section-label { font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #888; margin-bottom: 10px; }
+  .section-label.overdue { color: #e53e3e; }
+  .followup-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
+  .followup-row { background: #fff; border-radius: 10px; padding: 14px 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #eaecf5; display: flex; gap: 12px; align-items: center; }
+  .followup-row.overdue { border-color: #fecaca; }
+  .followup-row input[type=checkbox] { width: 16px; height: 16px; cursor: pointer; accent-color: #3b5bdb; flex-shrink: 0; }
+  .followup-row .text { flex: 1; font-size: 14px; font-weight: 500; color: #1a1d2e; }
+  .followup-row .text.done { text-decoration: line-through; color: #aaa; }
+  .followup-row .sub { font-size: 12px; color: #888; margin-top: 3px; }
+  .followup-row .date { font-size: 12px; color: #aaa; white-space: nowrap; }
+  .followup-row .date.overdue { color: #e53e3e; }
+
+  /* Interviews */
+  .interview-list { display: flex; flex-direction: column; gap: 10px; }
+  .interview-row { background: #fff; border-radius: 12px; padding: 16px 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); border: 1px solid #eaecf5; }
+  .interview-row-top { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; align-items: flex-start; }
+  .interview-row .round { font-weight: 700; font-size: 15px; }
+  .interview-row .company { font-size: 13px; color: #666; margin-top: 2px; }
+  .interview-row .meta { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .outcome-badge { font-size: 12px; font-weight: 700; border-radius: 6px; padding: 3px 10px; }
+  .interview-notes { font-size: 13px; color: #555; margin-top: 10px; line-height: 1.6; background: #fafbff; border-radius: 8px; padding: 10px 12px; }
+
+  /* Empty state */
+  .empty-state { text-align: center; padding: 60px 20px; color: #aaa; }
+  .empty-state .icon { font-size: 40px; margin-bottom: 12px; }
+  .empty-state .msg { font-size: 16px; font-weight: 600; color: #888; }
+
+  /* Modal overlay */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(10,12,20,0.55); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 16px; }
+  .modal-box { background: #fff; border-radius: 16px; padding: 28px; width: 100%; max-width: 520px; max-height: 92vh; overflow-y: auto; box-shadow: 0 24px 60px rgba(0,0,0,0.18); }
+  .modal-box.wide { max-width: 680px; }
+  .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+  .modal-header h3 { font-family: 'Playfair Display', Georgia, serif; font-size: 20px; color: #1a1d2e; }
+  .modal-close { background: none; border: none; cursor: pointer; font-size: 22px; color: #999; line-height: 1; font-family: inherit; }
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px; }
+
+  /* Detail panel */
+  #detail-overlay { position: fixed; inset: 0; background: rgba(10,12,20,0.4); z-index: 90; display: flex; justify-content: flex-end; }
+  #detail-panel { background: #fff; width: 100%; max-width: 420px; height: 100%; overflow-y: auto; padding: 28px; box-shadow: -8px 0 40px rgba(0,0,0,0.12); }
+  #detail-panel h2 { font-family: 'Playfair Display', serif; font-size: 20px; margin: 0; }
+  .detail-section-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #888; margin-bottom: 8px; }
+  .detail-item { background: #f4f5fb; border-radius: 8px; padding: 10px 12px; margin-bottom: 6px; }
+  .detail-item .round { font-weight: 600; font-size: 13px; }
+  .detail-item .sub { font-size: 12px; color: #666; margin-top: 4px; }
+  #detail-panel .warn-box { background: #fff8ee; border: 1px solid #f0d090; border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; font-size: 13px; color: #7a5c1e; }
+
+  /* Email generator */
+  .email-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .email-snapshot { background: #f4f5fb; border-radius: 10px; padding: 12px 14px; margin-bottom: 16px; font-size: 13px; color: #555; line-height: 1.7; }
+  .email-draft { background: #f8f9ff; border: 1.5px solid #dde2f8; border-radius: 12px; padding: 20px; margin-bottom: 18px; font-family: Georgia, serif; font-size: 14px; line-height: 1.85; color: #2a2d3e; white-space: pre-wrap; min-height: 180px; }
+  .generating-center { text-align: center; padding: 48px 20px; }
+  .generating-center .icon { font-size: 40px; margin-bottom: 16px; }
+  .generating-center .title { font-size: 16px; font-weight: 600; color: #3b5bdb; margin-bottom: 8px; }
+  .generating-center .sub { font-size: 13px; color: #aaa; margin-bottom: 20px; }
+  .dots { display: flex; gap: 6px; justify-content: center; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; background: #4c6ef5; animation: dotpulse 1.2s infinite ease-in-out; }
+  .dot:nth-child(2) { animation-delay: 0.2s; }
+  .dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes dotpulse { 0%,100%{transform:scale(0.6);opacity:0.35} 50%{transform:scale(1.2);opacity:1} }
+
+  /* Misc */
+  .hidden { display: none !important; }
+  .flex-between { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+  .flex-gap { display: flex; gap: 8px; flex-wrap: wrap; }
+  .notes-box { background: #fafbff; border-radius: 8px; padding: 14px; font-size: 13px; color: #555; line-height: 1.6; margin-bottom: 16px; }
+  .loc-text { font-size: 12px; color: #888; }
+  .followup-check-row { display: flex; gap: 8px; align-items: center; margin-bottom: 6px; }
+  .followup-check-row input { accent-color: #3b5bdb; }
+  .followup-check-row span { font-size: 13px; color: #333; }
+  .followup-check-row span.done { text-decoration: line-through; color: #aaa; }
+  .followup-check-row .date-sm { font-size: 11px; color: #bbb; margin-left: auto; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div id="header">
+  <div id="header-inner">
+    <div id="header-top">
+      <div>
+        <h1>Job Search HQ</h1>
+        <p>Your personal career pipeline</p>
+      </div>
+      <div id="stats">
+        <div class="stat-box"><div class="val" id="stat-active">0</div><div class="lbl">Active</div></div>
+        <div class="stat-box"><div class="val alert" id="stat-due">0</div><div class="lbl">Due Today</div></div>
+        <div class="stat-box"><div class="val alert" id="stat-update">0</div><div class="lbl">Needs Update</div></div>
+        <button id="email-btn" onclick="openEmailGen()">✉ AI Email Draft</button>
+      </div>
+    </div>
+    <div id="tabs">
+      <button class="tab-btn active" onclick="switchTab('pipeline',this)">Pipeline</button>
+      <button class="tab-btn" onclick="switchTab('kanban',this)">🗂 Kanban</button>
+      <button class="tab-btn" onclick="switchTab('contacts',this)">Contacts</button>
+      <button class="tab-btn" onclick="switchTab('followups',this)">Follow-ups</button>
+      <button class="tab-btn" onclick="switchTab('interviews',this)">Interviews</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div id="content">
+
+  <!-- PIPELINE TAB -->
+  <div id="tab-pipeline">
+    <div class="toolbar">
+      <input class="inp" id="search-input" placeholder="Search companies or roles…" oninput="renderPipeline()" style="max-width:260px;background:#fff" />
+      <select class="inp" id="status-filter" onchange="renderPipeline()" style="max-width:160px;background:#fff">
+        <option value="All">All Statuses</option>
+      </select>
+      <button class="btn-primary" style="margin-left:auto" onclick="openJobModal(null)">+ Add Job</button>
+    </div>
+    <div class="pipeline-list" id="pipeline-list"></div>
+  </div>
+
+  <!-- KANBAN TAB -->
+  <div id="tab-kanban" class="hidden">
+    <div id="kanban-hint"><span>💡</span><span>Cards with a dashed border need updating — click to add role title, salary, and notes once you've synced your email.</span></div>
+    <p id="kanban-tip">🖱 Drag cards between columns to update status · Click a card to view or edit details</p>
+    <div id="kanban-board"></div>
+  </div>
+
+  <!-- CONTACTS TAB -->
+  <div id="tab-contacts" class="hidden">
+    <div class="toolbar" style="justify-content:flex-end">
+      <button class="btn-primary" onclick="openContactModal(null)">+ Add Contact</button>
+    </div>
+    <div class="contacts-grid" id="contacts-grid"></div>
+  </div>
+
+  <!-- FOLLOW-UPS TAB -->
+  <div id="tab-followups" class="hidden">
+    <div class="flex-between" style="margin-bottom:20px">
+      <button class="btn-secondary" onclick="openEmailGen()">✨ Draft Follow-up Email</button>
+      <button class="btn-primary" onclick="openFollowupModal(null)">+ Add Task</button>
+    </div>
+    <div id="followups-content"></div>
+  </div>
+
+  <!-- INTERVIEWS TAB -->
+  <div id="tab-interviews" class="hidden">
+    <div class="toolbar" style="justify-content:flex-end">
+      <button class="btn-primary" onclick="openInterviewModal(null)">+ Log Interview</button>
+    </div>
+    <div class="interview-list" id="interview-list"></div>
+  </div>
+
+</div>
+
+<!-- DETAIL PANEL -->
+<div id="detail-overlay" class="hidden" onclick="if(event.target===this)closeDetail()">
+  <div id="detail-panel"></div>
+</div>
+
+<!-- MODALS -->
+<div id="modal-overlay" class="hidden" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box" id="modal-box">
+    <div class="modal-header">
+      <h3 id="modal-title"></h3>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<script>
+// ─── DATA ────────────────────────────────────────────────────────────────────
+const STATUSES = ["Wishlist","Referred","Applied","Phone Screen","Interviewing","Offer","Rejected","Withdrawn"];
+const STATUS_COLORS = {
+  "Wishlist":     {bg:"#f0f4ff",text:"#4a6fa5",dot:"#4a6fa5",col:"#e8eeff"},
+  "Referred":     {bg:"#fdf0ff",text:"#7c3aad",dot:"#a855f7",col:"#f5e8ff"},
+  "Applied":      {bg:"#fff7e6",text:"#b07d2e",dot:"#e8a020",col:"#fef3d0"},
+  "Phone Screen": {bg:"#f0f9ff",text:"#2e7ba5",dot:"#2e9fd6",col:"#dff2ff"},
+  "Interviewing": {bg:"#f0fff4",text:"#2e7a4a",dot:"#27ae60",col:"#d8f5e4"},
+  "Offer":        {bg:"#f5f0ff",text:"#6a3fbf",dot:"#8b5cf6",col:"#ede8ff"},
+  "Rejected":     {bg:"#fff0f0",text:"#a53030",dot:"#e53e3e",col:"#ffe4e4"},
+  "Withdrawn":    {bg:"#f5f5f5",text:"#666",   dot:"#aaa",   col:"#ececec"},
+};
+
+const SEED = {
+  jobs: [
+    // ── HOTTEST OPPORTUNITIES ──
+    {
+      id: 110,
+      company: "Microsoft",
+      title: "Director, Business Planning",
+      status: "Interviewing",
+      location: "Atlanta, GA (Hybrid)",
+      salary: "IC5",
+      url: "https://apply.careers.microsoft.com/careers?query=200030056",
+      notes: "Referred by Kensington Schmidt (Tuck connection, Microsoft 365 Copilot GBB) on Mar 19. Applied Mar 23. Role sits on Annie Chen's team (New Commerce & Commercial Strategy, Public Sector). Focus: modernizing Public Sector partner transactions from legacy Enterprise Agreement (EA) to Cloud Solution Provider (CSP) model. Annie's boss owns all Public Sector GTM strategy including field sellers. Key stakeholders: Global Partner Organization, Finance, partner incentives, and commerce engineering.\n\nRecruiter: Kimberly Miller (kimil@microsoft.com). Initial assessment with HM Annie Chen completed Apr 14 via Teams — strong mutual fit. Annie described success as 'defining the north star and how to get there.' Sent thank-you to Annie and Kimberly same day (Apr 14). Awaiting next steps / loop invite.\n\nKey proof point to lead with: AWS Marketplace Public Sector procurement rewrite — directly analogous to CSP transition challenge.",
+      dateAdded: "2026-03-23",
+      contacts: [107, 108, 109, 110],
+      followUps: []
+    },
+    {
+      id: 105,
+      company: "NexusOne (Nexus Cognitive)",
+      title: "Head of Healthcare & Public Sector (Fractional / BD)",
+      status: "Phone Screen",
+      location: "Atlanta, GA",
+      salary: "Negotiating — prefer cash-heavy + milestone bonuses",
+      url: "",
+      notes: "Small Atlanta-based enterprise data/AI readiness company. CEO Anu Jain (Harvard Business School alum, former IBM Watson/Deloitte) asked Mollie to build healthcare and public sector business from scratch.\n\nVisited NexusOne office Apr 3. 4-page GTM proposal (NexusOne_Proposal_4Page.docx) delivered after four iterations. Target partners: AWS Health and Life Sciences, Booz Allen Hamilton, Deloitte, Carahsoft.\n\nKey contacts: Anu Jain — CEO (anu@nexuscognitive.com); Amer Issa — Head of Technology & Engineering; Billy Allocca — Marketing.\n\nCompensation discussion underway. Structure preference: signing bonus + milestone-based variable for Q1–Q2 (pipeline/activity metrics), flip to revenue performance in Q3+. Targeting upper end of market base salary range.",
+      dateAdded: "2026-04-03",
+      contacts: [104, 111, 112],
+      followUps: []
+    },
+    {
+      id: 101,
+      company: "AWS",
+      title: "Business Operations Manager, SMGS",
+      status: "Interviewing",
+      location: "Atlanta, GA (Remote-friendly)",
+      salary: "",
+      url: "",
+      notes: "Internal opportunity (still have access for ~2 weeks as of Apr 15). Had informational with Julie (recruiter). Targeting Business Ops role supporting SMGS/AGS org under Rich Giraffo. Role owns rhythm of business: target setting (IPMM), pipeline inspection, live business reviews, and weekly exec summary for WBR.\n\nJulie felt this was a stronger fit than PE Ops role. Next step: fill out internal application (informational form) to kick off loop. Julie will assign interviewers via tool — expect 3+ people. Loop may cover multiple open roles. Zach is also recruiting for this req.\n\nKey narrative asset: 5-year WWPS strategic plan ($35B target), Greenfield GTM program (6→146 sellers, 102% attainment), Gen AI escalation (80% target reduction), Goal Mechanism (55→15 metrics).",
+      dateAdded: "2026-04-15",
+      contacts: [101],
+      followUps: []
+    },
+    // ── ACTIVE PIPELINE ──
+    {
+      id: 104,
+      company: "Cox Automotive",
+      title: "Director, Product Strategy",
+      status: "Interviewing",
+      location: "Atlanta, GA",
+      salary: "",
+      url: "",
+      notes: "Referred by friend John. Recruiter screen with Lori Howell confirmed and completed Apr 13 (rescheduled from Apr 9 after cancellation). Scheduled via Rosie/Paradox AI system. Awaiting next steps after screening call.",
+      dateAdded: "2026-04-09",
+      contacts: [103],
+      followUps: []
+    },
+    {
+      id: 106,
+      company: "Workday",
+      title: "Revenue Strategy & Operations (Relationship Building)",
+      status: "Phone Screen",
+      location: "Remote",
+      salary: "",
+      url: "",
+      notes: "Referred by Kelly Ducourty. Connected with Anna King (VP Global TA, GCO) in late March — great call. Anna does not think Director of Strategic Initiatives (reports to SVP Products Chief of Staff) is the right fit but offered a referral if interested. Anna connected Mollie to Julie Robinson, Global Lead for Revenue Strategy & Operations.\n\nZoom meet with Julie Robinson scheduled Apr 21 at 10:30am ET (25 min). No open req currently — relationship building for future openings.",
+      dateAdded: "2026-03-24",
+      contacts: [105, 106, 113],
+      followUps: []
+    },
+    {
+      id: 102,
+      company: "Google",
+      title: "Strategy & Operations Lead (Referral Active)",
+      status: "Phone Screen",
+      location: "United States",
+      salary: "",
+      url: "",
+      notes: "Applied for Strategy and Operations Lead, Americas PGTM — rejected Apr 9. However, on Apr 13 received a NEW referral invitation from Alex Koes (Googler) to apply to up to 3 roles within 30 days (~30-day window from Apr 13). ACTIVE — must accept invitation and identify 3 target roles before window closes (~May 13).",
+      dateAdded: "2026-04-13",
+      contacts: [102],
+      followUps: []
+    },
+    {
+      id: 109,
+      company: "Autodesk",
+      title: "Senior Director, Business Strategy, Media & Entertainment",
+      status: "Applied",
+      salary: "",
+      url: "https://autodesk.wd1.myworkdayjobs.com/Ext/job/Plano-TX-USA/Director-Business-Strategy--Media---Entertainment_26WD95518-2",
+      notes: "Referred by an internal Autodesk contact (warm referral, Mar 24). Originally listed as Director, confirmed as Senior Director. Application received Mar 31 — Autodesk Talent Team noted they value referred candidates and are reviewing for alignment. No recruiter outreach yet as of Apr 15. Follow up with referrer.",
+      dateAdded: "2026-03-31",
+      contacts: [],
+      followUps: []
+    },
+    {
+      id: 107,
+      company: "Honeywell",
+      title: "Sr. Director, Strategic Planning",
+      status: "Applied",
+      location: "Atlanta, GA",
+      salary: "",
+      url: "",
+      notes: "Role surfaced via LinkedIn job alerts. No direct recruiter contact or application confirmation found in email as of Apr 15. LinkedIn prompt to apply still active. Confirm whether application was submitted.",
+      dateAdded: "2026-04-15",
+      contacts: [],
+      followUps: []
+    },
+    {
+      id: 108,
+      company: "Cisco",
+      title: "Director, GTM Strategy & Transformation",
+      status: "Applied",
+      location: "Atlanta, GA (Remote — preferred locations: Atlanta, Austin, Research Triangle Park)",
+      salary: "$200,400–$258,200 base + equity + bonus",
+      url: "https://careers.cisco.com/global/en/job/CISCISGLOBAL2006822EXTERNALENGLOBAL/Director-GTM-Strategy-Transformation",
+      notes: "Application submitted Apr 14 — confirmation email received. Application window closes Apr 23, 2026 (or earlier if filled).\n\nRole: Director, GTM Strategy & Transformation — Americas Sales Strategy, Planning & Operations (SP&O). Reports to Senior Director. Remote with preferred hub in Atlanta.\n\nKey responsibilities: Build annual/long-range strategic sales growth plans; lead high-impact transformation initiatives; conduct data-driven market/competitive analysis; lead a GTM strategy team; prepare Americas Sales Head/COO for Board, ELT, SLT meetings; own change management across sales org. Partners with Sales, Finance, Specialist, Ops, and Business Units.\n\nMin quals: 8+ years in consulting, strategy, or sales (with people mgmt). MBA preferred. Tech sector GTM experience a strong plus.\n\nFit highlights: Directly maps to AWS 5-year strategic plan ($35B), Greenfield GTM program, Goal Mechanism (55→15 metrics), and Gen AI escalation work. Strong story on executive comms, cross-functional alignment, and building repeatable sales play engines. COO prep language maps to Chief of Staff work at HPE.",
+      dateAdded: "2026-04-14",
+      contacts: [],
+      followUps: []
+    },
+    // ── ARCHIVED ──
+    {
+      id: 103,
+      company: "Microsoft",
+      title: "Strategic Account Executive / Experience Lead AI",
+      status: "Rejected",
+      location: "",
+      salary: "",
+      url: "",
+      notes: "Two rejections: Strategic Account Executive (Apr 3) and Experience Lead, AI Acceleration Program (Apr 15). Both declined after review. No active pipeline — Director Business Planning (ID 110) is the live Microsoft opportunity.",
+      dateAdded: "2026-04-03",
+      contacts: [],
+      followUps: []
+    },
+  ],
+
+  contacts: [
+    // AWS
+    {id:101, name:"Julie", company:"AWS", role:"Recruiter (SMGS/AGS)", email:"", linkedin:"", notes:"Led informational interview for Business Ops Manager role. Open to Atlanta location. Will assign interviewers via internal tool once informational application is submitted. Also coordinating with Zach on open reqs. Loop may cover multiple roles.", jobIds:[101]},
+    // Google
+    {id:102, name:"Alex Koes", company:"Google", role:"Googler / Referrer", email:"", linkedin:"", notes:"Sent new referral invitation Apr 13. Window: ~30 days (expires ~May 13). Allows applying to up to 3 Google roles. Accept invitation and identify target roles ASAP. Keep Alex informed on application status.", jobIds:[102]},
+    // Cox Automotive
+    {id:103, name:"Lori Howell", company:"Cox Automotive", role:"Recruiter", email:"", linkedin:"", notes:"Conducted recruiter virtual screen Apr 13 for Director, Product Strategy. Scheduled via Rosie (Paradox AI). Referred by friend John.", jobIds:[104]},
+    // NexusOne
+    {id:104, name:"Anu Jain", company:"NexusOne (Nexus Cognitive)", role:"CEO", email:"anu@nexuscognitive.com", linkedin:"", notes:"Harvard Business School alum. Former IBM Watson / Deloitte executive. Met in person at NexusOne office Apr 3. Shared 4-page GTM proposal. Awaiting feedback. Compensation discussion underway — prefers structured ramp deal.", jobIds:[105]},
+    // Workday
+    {id:105, name:"Anna King", company:"Workday", role:"VP, Global Talent Acquisition (GCO)", email:"anna.king@workday.com", linkedin:"", notes:"Introduced via Kelly Ducourty. Great informational call late March. Feels Director of Strategic Initiatives may not be right fit; connected Mollie to Julie Robinson for Revenue Strategy & Ops. Open to referring if right role opens.", jobIds:[106]},
+    {id:106, name:"Julie Robinson", company:"Workday", role:"Global Lead, Revenue Strategy & Operations", email:"julie.robinson@workday.com", linkedin:"", notes:"Connected by Anna King. Zoom meet scheduled Apr 21 at 10:30am ET. No open req currently — relationship building for future openings in Rev Strategy & Ops.", jobIds:[106]},
+    // Microsoft (Director Business Planning)
+    {id:107, name:"Kensington Schmidt", company:"Microsoft", role:"Director, Microsoft 365 Copilot – Global Black Belt", email:"keschmidt@microsoft.com", linkedin:"linkedin.com/in/kensington-schmidt", notes:"Tuck classmate. Referred Mollie for Director Business Planning role (Mar 19). Also connected Mollie to Molly Jacobstein for PS/gov cloud context ahead of interview. Key warm intro.", jobIds:[110]},
+    {id:108, name:"Annie Chen", company:"Microsoft", role:"Hiring Manager — Director Business Planning (PS)", email:"Annie.Chen@microsoft.com", linkedin:"", notes:"HM for Director, Business Planning on New Commerce & Commercial Strategy, Public Sector team. Team owns partner economics (incentives, rebates) and cross-product GTM. Annie's boss owns all PS GTM strategy including field sellers. Initial assessment Apr 14 via Teams — strong mutual fit. Described success as 'defining the north star and how to get there.' Thank-you sent Apr 14.", jobIds:[110]},
+    {id:109, name:"Kimberly Miller", company:"Microsoft", role:"Recruiter, Global Talent Acquisition", email:"kimil@microsoft.com", linkedin:"", notes:"Recruiter for Director Business Planning role. Coordinated initial assessment with Annie Chen. Was under the weather before sending Teams invite. Thank-you sent Apr 14. Follow up on loop timing and next steps.", jobIds:[110]},
+    {id:110, name:"Molly Jacobstein", company:"Microsoft", role:"PS / Gov Cloud Context (Intro via Kensington)", email:"", linkedin:"", notes:"Connected by Kensington Schmidt to provide Public Sector and gov cloud context ahead of Annie Chen interview. Helpful background on team dynamics and role scope.", jobIds:[110]},
+    // NexusOne additional
+    {id:111, name:"Amer Issa", company:"NexusOne (Nexus Cognitive)", role:"Head of Technology & Engineering", email:"", linkedin:"", notes:"Key technical contact at NexusOne. Important stakeholder for GTM proposal and partnership execution.", jobIds:[105]},
+    {id:112, name:"Billy Allocca", company:"NexusOne (Nexus Cognitive)", role:"Marketing", email:"", linkedin:"", notes:"Marketing contact at NexusOne. Relevant for co-marketing with target partners (AWS, Booz Allen, Deloitte, Carahsoft).", jobIds:[105]},
+    // Workday referral source
+    {id:113, name:"Kelly Ducourty", company:"Workday", role:"Referral Source", email:"kelly.ducourty@workday.com", linkedin:"", notes:"Original Workday connection who introduced Mollie to Anna King. 30-min phone catch-up Feb 19. Keep warm — she's the source of the Workday thread.", jobIds:[106]},
+  ],
+
+  followUps: [
+    // TODAY / URGENT
+    {id:201, jobId:101, text:"Submit AWS internal application (informational form) to kick off interview loop with Julie/Zach", dueDate:"2026-04-16", done:false},
+    // THIS WEEK
+    {id:205, jobId:107, text:"Confirm whether Honeywell Sr. Director Strategic Planning application was actually submitted", dueDate:"2026-04-17", done:false},
+    {id:204, jobId:105, text:"Follow up with Anu Jain on NexusOne proposal — iterate on compensation structure and finalize engagement terms", dueDate:"2026-04-18", done:false},
+    {id:206, jobId:108, text:"Follow up with Cisco recruiter on application status — window closes Apr 23", dueDate:"2026-04-21", done:false},
+    // NEXT WEEK
+    {id:203, jobId:102, text:"Accept Alex Koes's Google referral invitation and identify 3 target roles to apply (window ~30 days from Apr 13)", dueDate:"2026-04-20", done:false},
+    {id:202, jobId:101, text:"Complete AWS internal interview loop before 2-week internal access expires", dueDate:"2026-04-29", done:false},
+    {id:208, jobId:110, text:"Follow up with Kimberly Miller (Microsoft recruiter) on next steps after Annie Chen initial assessment", dueDate:"2026-04-21", done:false},
+    {id:207, jobId:109, text:"Follow up with Autodesk internal referrer — application under review since Mar 31, no update yet", dueDate:"2026-04-21", done:false},
+    {id:209, jobId:106, text:"Send follow-up note to Julie Robinson (Workday) after Apr 21 Zoom connect", dueDate:"2026-04-22", done:false},
+    // PENDING — GENERAL
+    {id:210, jobId:110, text:"Prep Microsoft loop: refresh CSP vs EA transition narrative; lead with AWS Marketplace Public Sector procurement rewrite as key proof point", dueDate:"2026-04-25", done:false},
+    {id:211, jobId:105, text:"NexusOne comp: finalize signing bonus + milestone-based variable structure (Q1-Q2 pipeline/activity → Q3 revenue performance)", dueDate:"2026-04-23", done:false},
+  ],
+
+  interviews: [
+    // UPCOMING
+    {id:303, jobId:106, round:"Networking Connect — Julie Robinson", date:"2026-04-21", outcome:"Pending", notes:"Zoom with Julie Robinson (Global Lead, Revenue Strategy & Operations, Workday) at 10:30am ET. 25-min meeting. Introduced by Anna King. No open req currently — relationship building for future openings in Rev Strategy & Ops."},
+    // COMPLETED (RECENT)
+    {id:302, jobId:110, round:"Initial Assessment — Annie Chen (HM)", date:"2026-04-14", outcome:"Pending", notes:"Teams call with HM Annie Chen, coordinated by recruiter Kimberly Miller. Role: Director, Business Planning (PS partner strategy team — New Commerce & Commercial Strategy). Felt strong mutual fit. Annie described success as defining the north star and how to get there. Her team owns partner economics (incentives, rebates) and cross-product GTM for Public Sector. Key stakeholders: Global Partner Organization, Finance, partner incentives, commerce engineering. Sent thank-you to Annie and Kimberly same day."},
+    {id:301, jobId:104, round:"Recruiter Screen — Lori Howell", date:"2026-04-13", outcome:"Pending", notes:"Virtual screen with Lori Howell (Cox Automotive recruiter). Role: Director, Product Strategy. Originally scheduled Apr 9, rescheduled to Apr 13. Referred by friend John. Awaiting next steps."},
+    // COMPLETED (EARLIER)
+    {id:306, jobId:106, round:"Networking — Anna King 1:1", date:"2026-03-24", outcome:"Completed", notes:"30-min Zoom with Anna King (VP, Global Talent Acquisition, Workday GCO) on Mar 24. Introduced via Kelly Ducourty. Anna subsequently connected Mollie to Julie Robinson for Revenue Strategy & Ops. Discussed Director of Strategic Initiatives — Anna felt it may not be right fit but offered referral if interested."},
+    {id:305, jobId:106, round:"Networking — Kelly Ducourty", date:"2026-02-19", outcome:"Completed", notes:"30-min phone catch-up with Kelly Ducourty (kelly.ducourty@workday.com) on Feb 19. Kelly is the original Workday connection. This call led to Anna King intro and the broader Workday thread."},
+    {id:304, jobId:101, round:"Recruiter Informational — Julie (AWS)", date:"2026-01-29", outcome:"Completed", notes:"Amazon Chime call via Prelude. Julie identified Business Ops Manager (SMGS) as stronger fit over PE Ops role. Discussed internal application process — next step is to submit informational form to kick off loop. 2-week internal access window active."},
+  ],
+};
+
+function loadData() {
+  try {
+    const saved = localStorage.getItem("jobcrm_html_v2");
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      // Merge any new seed jobs not in saved data
+      const existingIds = new Set(parsed.jobs.map(j => j.id));
+      const newJobs = SEED.jobs.filter(j => !existingIds.has(j.id));
+      if (newJobs.length) parsed.jobs = [...parsed.jobs, ...newJobs];
+      return parsed;
+    }
+  } catch {}
+  return JSON.parse(JSON.stringify(SEED));
+}
+
+let DB = loadData();
+
+function saveData() {
+  try { localStorage.setItem("jobcrm_html_v2", JSON.stringify(DB)); } catch {}
+}
+
+// ─── UTILS ───────────────────────────────────────────────────────────────────
+function today() { return new Date().toISOString().split("T")[0]; }
+function esc(s) { return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+
+function statusBadgeHTML(status) {
+  const c = STATUS_COLORS[status] || STATUS_COLORS["Wishlist"];
+  return `<span class="status-badge" style="background:${c.bg};color:${c.text}"><span class="status-dot" style="background:${c.dot}"></span>${esc(status)}</span>`;
+}
+
+function updateStats() {
+  const t = today();
+  const active = DB.jobs.filter(j => !["Rejected","Withdrawn"].includes(j.status)).length;
+  const due = DB.followUps.filter(f => !f.done && (f.dueDate === t || f.dueDate < t)).length;
+  const needsUpdate = DB.jobs.filter(j => j.title === "TBD").length;
+  document.getElementById("stat-active").textContent = active;
+  document.getElementById("stat-due").textContent = due;
+  document.getElementById("stat-update").textContent = needsUpdate;
+}
+
+// ─── TAB SWITCHING ───────────────────────────────────────────────────────────
+const TABS_MAP = {pipeline:"tab-pipeline",kanban:"tab-kanban",contacts:"tab-contacts",followups:"tab-followups",interviews:"tab-interviews"};
+let currentTab = "pipeline";
+
+function switchTab(name, btn) {
+  Object.values(TABS_MAP).forEach(id => document.getElementById(id).classList.add("hidden"));
+  document.getElementById(TABS_MAP[name]).classList.remove("hidden");
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  currentTab = name;
+  renderTab(name);
+}
+
+function renderTab(name) {
+  if (name==="pipeline") renderPipeline();
+  else if (name==="kanban") renderKanban();
+  else if (name==="contacts") renderContacts();
+  else if (name==="followups") renderFollowups();
+  else if (name==="interviews") renderInterviews();
+}
+
+function renderAll() {
+  updateStats();
+  renderTab(currentTab);
+}
+
+// ─── PIPELINE ────────────────────────────────────────────────────────────────
+function initStatusFilter() {
+  const sel = document.getElementById("status-filter");
+  STATUSES.forEach(s => {
+    const opt = document.createElement("option");
+    opt.value = s; opt.textContent = s;
+    sel.appendChild(opt);
+  });
+}
+
+function renderPipeline() {
+  const search = document.getElementById("search-input").value.toLowerCase();
+  const filter = document.getElementById("status-filter").value;
+  const list = document.getElementById("pipeline-list");
+  const jobs = DB.jobs.filter(j => {
+    const ms = filter==="All" || j.status===filter;
+    const mq = !search || j.company.toLowerCase().includes(search) || j.title.toLowerCase().includes(search);
+    return ms && mq;
+  });
+  if (!jobs.length) { list.innerHTML = `<div class="empty-state"><div class="icon">📋</div><div class="msg">No jobs found</div></div>`; return; }
+  list.innerHTML = jobs.map(job => {
+    const ints = DB.interviews.filter(i => i.jobId===job.id).length;
+    const fups = DB.followUps.filter(f => f.jobId===job.id && !f.done).length;
+    const needsUpdate = job.title==="TBD";
+    const tags = [
+      ints ? `<span class="pipeline-tag tag-blue">${ints} interview${ints>1?"s":""}</span>` : "",
+      fups ? `<span class="pipeline-tag tag-amber">${fups} task${fups>1?"s":""}</span>` : "",
+    ].filter(Boolean).join("");
+    return `<div class="pipeline-row${needsUpdate?" needs-update":""}" onclick="openDetail(${job.id})">
+      <div style="flex:1;min-width:160px">
+        <div class="co-name">${esc(job.company)}</div>
+        <div class="co-title${needsUpdate?" warn":""}">${needsUpdate?"⚠ Role title needed":esc(job.title)}</div>
+      </div>
+      ${statusBadgeHTML(job.status)}
+      ${job.location?`<span class="loc-text">📍 ${esc(job.location)}</span>`:""}
+      ${job.salary?`<span style="font-size:12px;color:#888;font-weight:500">${esc(job.salary)}</span>`:""}
+      <div class="pipeline-tags">${tags}</div>
+      <div class="pipeline-actions" onclick="event.stopPropagation()">
+        <button class="btn-primary btn-sm" onclick="openJobModal(${job.id})">Edit</button>
+        <button class="btn-danger" onclick="deleteJob(${job.id})">Delete</button>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function deleteJob(id) {
+  if (!confirm("Delete this job?")) return;
+  DB.jobs = DB.jobs.filter(j => j.id!==id);
+  saveData(); renderAll();
+}
+
+// ─── KANBAN ──────────────────────────────────────────────────────────────────
+let draggingId = null;
+
+function renderKanban() {
+  const board = document.getElementById("kanban-board");
+  const activeStatuses = ["Wishlist","Referred","Applied","Phone Screen","Interviewing","Offer"];
+  const archiveStatuses = ["Rejected","Withdrawn"];
+
+  let html = activeStatuses.map(status => {
+    const c = STATUS_COLORS[status];
+    const jobs = DB.jobs.filter(j => j.status===status);
+    const cards = jobs.length
+      ? jobs.map(j => kanbanCardHTML(j)).join("")
+      : `<div class="kanban-empty">Drop here</div>`;
+    return `<div class="kanban-col" data-status="${esc(status)}" style="--col-dot:${c.dot};--col-bg:${c.col}"
+      ondragover="kDragOver(event,this)" ondrop="kDrop(event,'${esc(status)}')" ondragleave="kDragLeave(this)">
+      <div class="kanban-col-header">
+        <div class="kanban-col-title">
+          <span style="width:7px;height:7px;border-radius:50%;background:${c.dot};display:inline-block"></span>
+          <span style="color:${c.text}">${esc(status.toUpperCase())}</span>
+        </div>
+        <span class="kanban-col-count">${jobs.length}</span>
+      </div>
+      <div class="kanban-cards">${cards}</div>
+    </div>`;
+  }).join("");
+
+  // Archive column
+  let archiveHTML = `<div id="archive-col"><div id="archive-label">Archive</div>`;
+  archiveStatuses.forEach(status => {
+    const c = STATUS_COLORS[status];
+    const jobs = DB.jobs.filter(j => j.status===status);
+    const cards = jobs.map(j => `<div class="archive-card" draggable="true" ondragstart="kDragStart(event,${j.id})" ondragend="kDragEnd()" onclick="openDetail(${j.id})">
+      <div class="company">${esc(j.company)}</div>
+      <div class="role">${esc(j.title==="TBD"?"Role TBD":j.title)}</div>
+    </div>`).join("");
+    archiveHTML += `<div class="archive-section" data-status="${esc(status)}" style="--col-dot:${c.dot};--col-bg:${c.col}"
+      ondragover="kDragOver(event,this)" ondrop="kDrop(event,'${esc(status)}')" ondragleave="kDragLeave(this)">
+      <div class="archive-header">
+        <span style="width:6px;height:6px;border-radius:50%;background:${c.dot};display:inline-block"></span>
+        <span style="font-size:11px;font-weight:700;color:${c.text};letter-spacing:0.04em">${esc(status.toUpperCase())}</span>
+        <span style="font-size:11px;color:#ccc;background:#fff;border-radius:8px;padding:0 6px;margin-left:auto">${jobs.length}</span>
+      </div>
+      ${cards || `<div style="font-size:11px;color:#ddd;font-style:italic;text-align:center;padding:8px 0">Drop here</div>`}
+    </div>`;
+  });
+  archiveHTML += `</div>`;
+
+  board.innerHTML = html + archiveHTML;
+}
+
+function kanbanCardHTML(job) {
+  const needsUpdate = job.title==="TBD";
+  const fups = DB.followUps.filter(f => f.jobId===job.id && !f.done).length;
+  const ints = DB.interviews.filter(i => i.jobId===job.id).length;
+  const badges = [
+    ints ? `<span class="kanban-badge tag-blue">${ints} int.</span>` : "",
+    fups ? `<span class="kanban-badge tag-amber">${fups} task${fups>1?"s":""}</span>` : "",
+  ].filter(Boolean).join("");
+  return `<div class="kanban-card${needsUpdate?" needs-update":""}" draggable="true"
+    ondragstart="kDragStart(event,${job.id})" ondragend="kDragEnd()" onclick="openDetail(${job.id})" id="kcard-${job.id}">
+    <div class="kanban-card-header">
+      <div class="company">${esc(job.company)}</div>
+      ${needsUpdate?`<span class="update-pill">UPDATE</span>`:""}
+    </div>
+    ${!needsUpdate?`<div class="role">${esc(job.title)}</div>`:""}
+    ${job.location?`<div class="loc">📍 ${esc(job.location)}</div>`:""}
+    ${badges?`<div class="badges">${badges}</div>`:""}
+  </div>`;
+}
+
+function kDragStart(e, id) {
+  draggingId = id;
+  e.dataTransfer.effectAllowed = "move";
+  setTimeout(() => { const el = document.getElementById("kcard-"+id); if(el) el.classList.add("dragging"); }, 0);
+}
+function kDragEnd() {
+  draggingId = null;
+  document.querySelectorAll(".kanban-card.dragging").forEach(el => el.classList.remove("dragging"));
+}
+function kDragOver(e, col) {
+  e.preventDefault();
+  col.classList.add("drag-over");
+}
+function kDragLeave(col) { col.classList.remove("drag-over"); }
+function kDrop(e, status) {
+  e.preventDefault();
+  if (draggingId == null) return;
+  const job = DB.jobs.find(j => j.id===draggingId);
+  if (job) job.status = status;
+  saveData(); renderAll();
+  document.querySelectorAll(".kanban-col.drag-over,.archive-section.drag-over").forEach(el => el.classList.remove("drag-over"));
+}
+
+// ─── CONTACTS ────────────────────────────────────────────────────────────────
+function renderContacts() {
+  const grid = document.getElementById("contacts-grid");
+  if (!DB.contacts.length) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="icon">🤝</div><div class="msg">No contacts yet</div></div>`;
+    return;
+  }
+  grid.innerHTML = DB.contacts.map(c => {
+    const relJobs = DB.jobs.filter(j => (j.contacts||[]).includes(c.id));
+    const tags = relJobs.map(j => `<span class="pipeline-tag tag-blue">${esc(j.company)}</span>`).join("");
+    return `<div class="contact-card">
+      <div class="contact-card-header">
+        <div><div class="name">${esc(c.name)}</div><div class="role">${esc(c.role)}${c.company?` @ ${esc(c.company)}`:""}</div></div>
+        <div class="flex-gap">
+          <button class="btn-icon" onclick="openEmailGen()">✉</button>
+          <button class="btn-secondary btn-sm" onclick="openContactModal(${c.id})">Edit</button>
+        </div>
+      </div>
+      ${c.email?`<div class="email">✉ ${esc(c.email)}</div>`:""}
+      ${c.notes?`<div class="notes">${esc(c.notes)}</div>`:""}
+      ${tags?`<div class="contact-tags">${tags}</div>`:""}
+    </div>`;
+  }).join("");
+}
+
+// ─── FOLLOW-UPS ──────────────────────────────────────────────────────────────
+function renderFollowups() {
+  const t = today();
+  const cont = document.getElementById("followups-content");
+  if (!DB.followUps.length) { cont.innerHTML = `<div class="empty-state"><div class="icon">✅</div><div class="msg">No follow-up tasks yet</div></div>`; return; }
+  const sections = [
+    {label:"Overdue", items: DB.followUps.filter(f => !f.done && f.dueDate < t)},
+    {label:"Today",   items: DB.followUps.filter(f => !f.done && f.dueDate === t)},
+    {label:"Upcoming",items: DB.followUps.filter(f => !f.done && f.dueDate > t)},
+    {label:"Done",    items: DB.followUps.filter(f => f.done)},
+  ].filter(s => s.items.length);
+  cont.innerHTML = sections.map(s => {
+    const rows = s.items.map(f => {
+      const job = DB.jobs.find(j => j.id===f.jobId);
+      const isOverdue = s.label==="Overdue";
+      return `<div class="followup-row${isOverdue?" overdue":""}">
+        <input type="checkbox" ${f.done?"checked":""} onchange="toggleFollowup(${f.id})">
+        <div style="flex:1">
+          <div class="text${f.done?" done":""}">${esc(f.text)}</div>
+          ${job?`<div class="sub">${esc(job.company)}</div>`:""}
+        </div>
+        <span class="date${isOverdue?" overdue":""}">${esc(f.dueDate)}</span>
+        <button class="btn-icon" onclick="openEmailGen()">✉ Draft</button>
+        <button class="btn-secondary btn-sm" onclick="openFollowupModal(${f.id})">Edit</button>
+      </div>`;
+    }).join("");
+    return `<div class="section-label${s.label==="Overdue"?" overdue":""}">${s.label}</div><div class="followup-list">${rows}</div>`;
+  }).join("");
+}
+
+function toggleFollowup(id) {
+  const f = DB.followUps.find(x => x.id===id);
+  if (f) f.done = !f.done;
+  saveData(); renderAll();
+}
+
+// ─── INTERVIEWS ──────────────────────────────────────────────────────────────
+function renderInterviews() {
+  const list = document.getElementById("interview-list");
+  if (!DB.interviews.length) { list.innerHTML = `<div class="empty-state"><div class="icon">🎤</div><div class="msg">No interviews logged yet</div></div>`; return; }
+  const sorted = [...DB.interviews].sort((a,b) => (b.date||"").localeCompare(a.date||""));
+  const outcomeColors = {Passed:"#27ae60",Failed:"#e53e3e",Pending:"#e8a020",Completed:"#3b5bdb"};
+  list.innerHTML = sorted.map(i => {
+    const job = DB.jobs.find(j => j.id===i.jobId);
+    const oc = outcomeColors[i.outcome]||"#888";
+    return `<div class="interview-row">
+      <div class="interview-row-top">
+        <div><div class="round">${esc(i.round)}</div>${job?`<div class="company">${esc(job.company)}</div>`:""}</div>
+        <div class="meta">
+          <span class="outcome-badge" style="color:${oc};background:${oc}18">${esc(i.outcome)}</span>
+          <span style="font-size:12px;color:#aaa">${esc(i.date)}</span>
+          <button class="btn-icon" onclick="openEmailGen()">✉ Thank You</button>
+          <button class="btn-secondary btn-sm" onclick="openInterviewModal(${i.id})">Edit</button>
+        </div>
+      </div>
+      ${i.notes?`<div class="interview-notes">${esc(i.notes)}</div>`:""}
+    </div>`;
+  }).join("");
+}
+
+// ─── DETAIL PANEL ────────────────────────────────────────────────────────────
+function openDetail(id) {
+  const job = DB.jobs.find(j => j.id===id);
+  if (!job) return;
+  const ints = DB.interviews.filter(i => i.jobId===job.id);
+  const fups = DB.followUps.filter(f => f.jobId===job.id);
+  const contacts = DB.contacts.filter(c => (job.contacts||[]).includes(c.id));
+  const needsUpdate = job.title==="TBD";
+
+  let html = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+    <h2>${esc(job.company)}</h2>
+    <button class="modal-close" onclick="closeDetail()">×</button>
+  </div>`;
+  if (needsUpdate) html += `<div class="warn-box">✏️ Click <strong>Edit Job</strong> below to fill in role title, salary, and other details.</div>`;
+  html += `<div style="font-size:14px;color:#555;margin-bottom:4px">${needsUpdate?"Role TBD":esc(job.title)}</div>
+  <div style="margin-bottom:16px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+    ${statusBadgeHTML(job.status)}
+    ${job.location?`<span class="loc-text">📍 ${esc(job.location)}</span>`:""}
+    ${job.salary?`<span style="font-size:12px;color:#888">${esc(job.salary)}</span>`:""}
+  </div>`;
+  if (job.notes) {
+    html += `<div class="notes-box">${esc(job.notes)}</div>`;
+  }
+  if (ints.length) {
+    html += `<div class="detail-section-label">Interviews</div>`;
+    html += ints.map(i => `<div class="detail-item"><div class="round">${esc(i.round)} <span style="color:#888;font-weight:400">· ${esc(i.date)}</span></div>${i.notes?`<div class="sub">${esc(i.notes)}</div>`:""}</div>`).join("");
+    html += `<div style="margin-bottom:12px"></div>`;
+  }
+  if (fups.length) {
+    html += `<div class="detail-section-label">Follow-ups</div>`;
+    html += fups.map(f => `<div class="followup-check-row">
+      <input type="checkbox" ${f.done?"checked":""} onchange="toggleFollowup(${f.id});openDetail(${job.id})">
+      <span class="${f.done?"done":""}">${esc(f.text)}</span>
+      <span class="date-sm">${esc(f.dueDate)}</span>
+    </div>`).join("");
+    html += `<div style="margin-bottom:12px"></div>`;
+  }
+  if (contacts.length) {
+    html += `<div class="detail-section-label">Contacts</div>`;
+    html += contacts.map(c => `<div class="detail-item"><div class="round">${esc(c.name)}</div><div class="sub">${esc(c.role)}${c.email?` · ${esc(c.email)}`:""}</div></div>`).join("");
+    html += `<div style="margin-bottom:12px"></div>`;
+  }
+  html += `<div class="flex-gap" style="margin-top:8px">
+    <button class="btn-primary" onclick="closeDetail();openJobModal(${job.id})">Edit Job</button>
+    <button class="btn-secondary" style="background:#eef2ff" onclick="openEmailGen()">✉ Draft Email</button>
+    <button class="btn-secondary" onclick="openFollowupModal(null,${job.id})">+ Task</button>
+    <button class="btn-secondary" onclick="openInterviewModal(null,${job.id})">+ Interview</button>
+  </div>`;
+
+  document.getElementById("detail-panel").innerHTML = html;
+  document.getElementById("detail-overlay").classList.remove("hidden");
+}
+function closeDetail() { document.getElementById("detail-overlay").classList.add("hidden"); }
+
+// ─── MODALS ──────────────────────────────────────────────────────────────────
+function showModal(title, bodyHTML, wide=false) {
+  document.getElementById("modal-title").textContent = title;
+  document.getElementById("modal-body").innerHTML = bodyHTML;
+  document.getElementById("modal-box").className = "modal-box" + (wide?" wide":"");
+  document.getElementById("modal-overlay").classList.remove("hidden");
+}
+function closeModal() { document.getElementById("modal-overlay").classList.add("hidden"); }
+
+function fieldHTML(label, inputHTML) {
+  return `<div class="field"><label>${label}</label>${inputHTML}</div>`;
+}
+
+// Job Modal
+function openJobModal(id) {
+  const job = id ? DB.jobs.find(j => j.id===id) : null;
+  const title = job ? `Edit — ${job.company}` : "Add Job";
+  const v = job || {};
+  const statusOpts = STATUSES.map(s => `<option${(v.status||"Wishlist")===s?" selected":""}>${s}</option>`).join("");
+  const body = `
+    ${fieldHTML("Company", `<input class="inp" id="f-company" value="${esc(v.company||"")}" />`)}
+    ${fieldHTML("Job Title", `<input class="inp" id="f-title" value="${v.title==="TBD"?"":esc(v.title||"")}" placeholder="e.g. Senior PM, Sales Engineer…" />`)}
+    ${fieldHTML("Status", `<select class="inp" id="f-status">${statusOpts}</select>`)}
+    ${fieldHTML("Location", `<input class="inp" id="f-location" value="${esc(v.location||"")}" placeholder="e.g. Remote, Atlanta, GA" />`)}
+    ${fieldHTML("Salary Range", `<input class="inp" id="f-salary" value="${esc(v.salary||"")}" placeholder="e.g. $150k–$180k" />`)}
+    ${fieldHTML("Job URL", `<input class="inp" id="f-url" value="${esc(v.url||"")}" placeholder="https://..." />`)}
+    ${fieldHTML("Notes", `<textarea class="inp" id="f-notes" style="min-height:80px">${esc(v.notes||"")}</textarea>`)}
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn-primary" onclick="saveJobModal(${id||"null"})">Save</button>
+    </div>`;
+  showModal(title, body);
+}
+
+function saveJobModal(id) {
+  const company = document.getElementById("f-company").value.trim();
+  if (!company) return alert("Company name required");
+  const fields = {
+    company, title: document.getElementById("f-title").value.trim()||"TBD",
+    status: document.getElementById("f-status").value,
+    location: document.getElementById("f-location").value.trim(),
+    salary: document.getElementById("f-salary").value.trim(),
+    url: document.getElementById("f-url").value.trim(),
+    notes: document.getElementById("f-notes").value.trim(),
+  };
+  if (id) {
+    const job = DB.jobs.find(j => j.id===id);
+    Object.assign(job, fields);
+  } else {
+    DB.jobs.push({...fields, id: Date.now(), dateAdded: today(), contacts:[], followUps:[]});
+  }
+  saveData(); closeModal(); renderAll();
+}
+
+// Contact Modal
+function openContactModal(id) {
+  const c = id ? DB.contacts.find(x => x.id===id) : null;
+  const v = c || {};
+  const body = `
+    ${fieldHTML("Name", `<input class="inp" id="f-name" value="${esc(v.name||"")}" />`)}
+    ${fieldHTML("Company", `<input class="inp" id="f-co" value="${esc(v.company||"")}" />`)}
+    ${fieldHTML("Role / Title", `<input class="inp" id="f-role" value="${esc(v.role||"")}" />`)}
+    ${fieldHTML("Email", `<input class="inp" id="f-email" value="${esc(v.email||"")}" />`)}
+    ${fieldHTML("LinkedIn", `<input class="inp" id="f-li" value="${esc(v.linkedin||"")}" />`)}
+    ${fieldHTML("Notes", `<textarea class="inp" id="f-notes" style="min-height:70px">${esc(v.notes||"")}</textarea>`)}
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn-primary" onclick="saveContactModal(${id||"null"})">${c?"Save":"Add Contact"}</button>
+    </div>`;
+  showModal(c?"Edit Contact":"Add Contact", body);
+}
+
+function saveContactModal(id) {
+  const name = document.getElementById("f-name").value.trim();
+  if (!name) return alert("Name required");
+  const fields = {name, company:document.getElementById("f-co").value.trim(), role:document.getElementById("f-role").value.trim(), email:document.getElementById("f-email").value.trim(), linkedin:document.getElementById("f-li").value.trim(), notes:document.getElementById("f-notes").value.trim()};
+  if (id) { const c = DB.contacts.find(x => x.id===id); Object.assign(c, fields); }
+  else DB.contacts.push({...fields, id:Date.now(), jobIds:[]});
+  saveData(); closeModal(); renderAll();
+}
+
+// Follow-up Modal
+function openFollowupModal(id, preJobId) {
+  const f = id ? DB.followUps.find(x => x.id===id) : null;
+  const v = f || {};
+  const jobOpts = `<option value="">— No job linked —</option>` + DB.jobs.map(j => `<option value="${j.id}"${(v.jobId||preJobId)===j.id?" selected":""}>${esc(j.company)}</option>`).join("");
+  const body = `
+    ${fieldHTML("Task", `<input class="inp" id="f-text" value="${esc(v.text||"")}" placeholder="e.g. Follow up with recruiter" />`)}
+    ${fieldHTML("Due Date", `<input type="date" class="inp" id="f-due" value="${esc(v.dueDate||"")}" />`)}
+    ${fieldHTML("Related Job", `<select class="inp" id="f-job">${jobOpts}</select>`)}
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn-primary" onclick="saveFollowupModal(${id||"null"})">Save</button>
+    </div>`;
+  showModal(f?"Edit Task":"Add Task", body);
+}
+
+function saveFollowupModal(id) {
+  const text = document.getElementById("f-text").value.trim();
+  if (!text) return alert("Task text required");
+  const fields = {text, dueDate:document.getElementById("f-due").value, jobId:parseInt(document.getElementById("f-job").value)||null};
+  if (id) { const f = DB.followUps.find(x => x.id===id); Object.assign(f, fields); }
+  else DB.followUps.push({...fields, id:Date.now(), done:false});
+  saveData(); closeModal(); renderAll();
+}
+
+// Interview Modal
+function openInterviewModal(id, preJobId) {
+  const i = id ? DB.interviews.find(x => x.id===id) : null;
+  const v = i || {};
+  const jobOpts = `<option value="">— Select a job —</option>` + DB.jobs.map(j => `<option value="${j.id}"${(v.jobId||preJobId)===j.id?" selected":""}>${esc(j.company)}</option>`).join("");
+  const outOpts = ["Pending","Passed","Failed","Completed"].map(o => `<option${(v.outcome||"Pending")===o?" selected":""}>${o}</option>`).join("");
+  const body = `
+    ${fieldHTML("Related Job", `<select class="inp" id="f-job">${jobOpts}</select>`)}
+    ${fieldHTML("Round / Type", `<input class="inp" id="f-round" value="${esc(v.round||"")}" placeholder="e.g. Recruiter Screen, Panel…" />`)}
+    ${fieldHTML("Date", `<input type="date" class="inp" id="f-date" value="${esc(v.date||"")}" />`)}
+    ${fieldHTML("Outcome", `<select class="inp" id="f-outcome">${outOpts}</select>`)}
+    ${fieldHTML("Notes", `<textarea class="inp" id="f-notes" style="min-height:90px" placeholder="What was discussed? How did it go?">${esc(v.notes||"")}</textarea>`)}
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn-primary" onclick="saveInterviewModal(${id||"null"})">Save</button>
+    </div>`;
+  showModal(i?"Edit Interview":"Log Interview", body);
+}
+
+function saveInterviewModal(id) {
+  const fields = {jobId:parseInt(document.getElementById("f-job").value)||null, round:document.getElementById("f-round").value.trim(), date:document.getElementById("f-date").value, outcome:document.getElementById("f-outcome").value, notes:document.getElementById("f-notes").value.trim()};
+  if (id) { const i = DB.interviews.find(x => x.id===id); Object.assign(i, fields); }
+  else DB.interviews.push({...fields, id:Date.now()});
+  saveData(); closeModal(); renderAll();
+}
+
+// ─── EMAIL GENERATOR ─────────────────────────────────────────────────────────
+function openEmailGen() {
+  const EMAIL_TYPES = [
+    {value:"thank_you",label:"Thank You (Post-Interview)"},
+    {value:"follow_up",label:"Follow-Up (No Response)"},
+    {value:"status_check",label:"Status Check-In"},
+    {value:"networking",label:"Networking Outreach"},
+    {value:"withdraw",label:"Withdraw Application"},
+    {value:"negotiate",label:"Offer Negotiation"},
+  ];
+  const jobOpts = `<option value="">— No job —</option>` + DB.jobs.map(j => `<option value="${j.id}">${esc(j.company)}${j.title&&j.title!=="TBD"?` · ${esc(j.title)}`:""}</option>`).join("");
+  const contactOpts = `<option value="">— No specific contact —</option>` + DB.contacts.map(c => `<option value="${c.id}">${esc(c.name)} (${esc(c.role)}${c.company?` @ ${esc(c.company)}`:""}</option>`).join("");
+  const typeOpts = EMAIL_TYPES.map(t => `<option value="${t.value}">${t.label}</option>`).join("");
+
+  const body = `<div id="email-step-configure">
+    <div class="email-grid">
+      ${fieldHTML("Email Type", `<select class="inp" id="e-type">${typeOpts}</select>`)}
+      ${fieldHTML("Related Job", `<select class="inp" id="e-job">${jobOpts}</select>`)}
+    </div>
+    ${fieldHTML("Send To (Contact)", `<select class="inp" id="e-contact">${contactOpts}</select>`)}
+    ${fieldHTML("Extra Context (optional)", `<textarea class="inp" id="e-context" style="min-height:80px" placeholder="e.g. 'Great phone screen last week' or 'Applied 2 weeks ago, no response'"></textarea>`)}
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn-primary" onclick="generateEmailDraft()">✨ Generate Draft</button>
+    </div>
+  </div>
+  <div id="email-step-generating" class="hidden">
+    <div class="generating-center">
+      <div class="icon">✍️</div>
+      <div class="title">Drafting your email…</div>
+      <div class="sub">Claude is crafting a personalized draft</div>
+      <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    </div>
+  </div>
+  <div id="email-step-result" class="hidden">
+    <div class="email-draft" id="email-draft-text"></div>
+    <div style="display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap">
+      <button class="btn-secondary" onclick="document.getElementById('email-step-result').classList.add('hidden');document.getElementById('email-step-configure').classList.remove('hidden')">← Adjust & Regenerate</button>
+      <div style="display:flex;gap:10px">
+        <button class="btn-secondary" style="color:#999" onclick="closeModal()">Close</button>
+        <button class="btn-primary" id="copy-btn" onclick="copyDraft()">Copy to Clipboard</button>
+      </div>
+    </div>
+  </div>`;
+
+  showModal("✉ AI Email Draft Generator", body, true);
+}
+
+async function generateEmailDraft() {
+  const jobId = parseInt(document.getElementById("e-job").value)||null;
+  const contactId = parseInt(document.getElementById("e-contact").value)||null;
+  const emailType = document.getElementById("e-type").value;
+  const extraContext = document.getElementById("e-context").value.trim();
+  const job = DB.jobs.find(j => j.id===jobId);
+  const contact = DB.contacts.find(c => c.id===contactId);
+  const EMAIL_LABELS = {thank_you:"Thank You (Post-Interview)",follow_up:"Follow-Up (No Response)",status_check:"Status Check-In",networking:"Networking Outreach",withdraw:"Withdraw Application",negotiate:"Offer Negotiation"};
+
+  document.getElementById("email-step-configure").classList.add("hidden");
+  document.getElementById("email-step-generating").classList.remove("hidden");
+
+  const jobContext = job
+    ? [`Company: ${job.company}`,`Role: ${job.title}`,`Status: ${job.status}`,job.location?`Location: ${job.location}`:"",job.notes?`Notes: ${job.notes.slice(0,400)}`:""].filter(Boolean).join("\n")
+    : "No specific job";
+  const contactInfo = contact
+    ? `Contact name: ${contact.name}, Title: ${contact.role}${contact.company?`, Company: ${contact.company}`:""}`
+    : "No specific contact";
+  const typeLabel = EMAIL_LABELS[emailType]||emailType;
+  const prompt = `You are a career coach helping a senior strategy professional (Mollie Evans, former AWS Head of Strategic Priorities, Dartmouth Tuck MBA) draft a professional email. Write a concise, warm, and authentic "${typeLabel}" email.\n\nJob Context:\n${jobContext}\n\n${contactInfo}\n\n${extraContext?`Additional context: ${extraContext}`:""}\n\nInstructions:\n- Write a complete email with Subject line, greeting, body, and sign-off\n- Keep the body under 150 words\n- Sound human, genuine, and professional — not overly salesy\n- Use [Mollie] as the sender name\n- If a contact name is provided, use their first name in the greeting\n- Format: Subject: ...\n\n[full email body]`;
+
+  try {
+    const res = await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,messages:[{role:"user",content:prompt}]})});
+    const data = await res.json();
+    const text = (data.content||[]).map(b=>b.text||"").join("")||"No response generated.";
+    document.getElementById("email-draft-text").textContent = text;
+  } catch {
+    document.getElementById("email-draft-text").textContent = "Something went wrong. Please try again.";
+  }
+  document.getElementById("email-step-generating").classList.add("hidden");
+  document.getElementById("email-step-result").classList.remove("hidden");
+}
+
+function copyDraft() {
+  const text = document.getElementById("email-draft-text").textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById("copy-btn");
+    btn.textContent = "✓ Copied!";
+    btn.style.background = "linear-gradient(135deg,#27ae60,#2ecc71)";
+    setTimeout(() => { btn.textContent = "Copy to Clipboard"; btn.style.background = ""; }, 2000);
+  });
+}
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+initStatusFilter();
+renderAll();
+// Default to Kanban tab
+document.querySelector('.tab-btn[onclick*="kanban"]').click();
+</script>
+</body>
+</html>
