@@ -1,28 +1,20 @@
 const { createClient } = require('@supabase/supabase-js');
 
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_ANON_KEY
-);
-
 exports.handler = async (event) => {
+  const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
   const headers = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'Content-Type',
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
     'Content-Type': 'application/json'
   };
-
   if (event.httpMethod === 'OPTIONS') return { statusCode: 200, headers, body: '' };
-
   const { table, id } = event.queryStringParameters || {};
   const method = event.httpMethod;
-
   const VALID_TABLES = ['jobs', 'contacts', 'follow_ups', 'interviews', 'sync_log'];
   if (!VALID_TABLES.includes(table)) {
-    return { statusCode: 400, headers, body: JSON.stringify({ error: `Invalid table: ${table}` }) };
+    return { statusCode: 400, headers, body: JSON.stringify({ error: 'Invalid table: ' + table }) };
   }
-
   try {
     if (method === 'GET') {
       let query = supabase.from(table).select('*');
